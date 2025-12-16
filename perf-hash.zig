@@ -108,7 +108,7 @@ const CSVRow = struct {
     duration_ns: u64,
 };
 
-fn writeCSV(io: std.Io, allocator: std.mem.Allocator, queue: *std.Io.Queue(?CSVRow), path: []const u8) void {
+fn writeCSV(io: std.Io, allocator: std.mem.Allocator, queue: *std.Io.Queue(CSVRow), path: []const u8) void {
     var csv = std.fs.cwd().createFile(path, .{ .truncate = true }) catch unreachable;
     defer csv.close();
 
@@ -134,7 +134,7 @@ fn writeCSV(io: std.Io, allocator: std.mem.Allocator, queue: *std.Io.Queue(?CSVR
 
     writer.print("type,ip,index,duration_ns\n", .{}) catch unreachable;
     while (!io.cancelRequested()) {
-        const row = (queue.getOne(io) catch break) orelse break;
+        const row = queue.getOne(io) catch break;
         _ = writer.print("{s},{x},{d},{d}\n", .{
             row.type,
             if (row.type[2] == '4') row.ip[12..16] else row.ip[0..],
