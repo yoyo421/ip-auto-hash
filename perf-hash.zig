@@ -62,9 +62,9 @@ pub fn main() !void {
     var rng2 = std.Random.Sfc64.init(0);
     const sample = rng2.random();
 
-    const queueBuffer = allocator.alloc(?CSVRow, 1024) catch unreachable;
+    const queueBuffer = allocator.alloc(CSVRow, 1024) catch unreachable;
     defer allocator.free(queueBuffer);
-    var queue = std.Io.Queue(?CSVRow).init(queueBuffer);
+    var queue = std.Io.Queue(CSVRow).init(queueBuffer);
 
     var f = try io.concurrent(writeCSV, .{ io, allocator, &queue, outputPath });
     defer f.cancel(io);
